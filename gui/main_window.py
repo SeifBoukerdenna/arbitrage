@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem,
-    QFileDialog, QScrollArea, QGroupBox, QTextEdit
+    QFileDialog, QScrollArea, QGroupBox, QTextEdit, QSplitter
 )
 from PyQt5.QtCore import Qt
 from .bet_entry_widget import BetEntryWidget
@@ -18,7 +18,11 @@ class MainWindow(QWidget):
         self.init_ui()
 
     def init_ui(self):
+        # Main layout for the entire app
         main_layout = QVBoxLayout()
+
+        # Add a main splitter for the entire application
+        main_splitter = QSplitter(Qt.Vertical)
 
         # Betting Strategy Configuration
         config_group = QGroupBox("Betting Strategy Configuration")
@@ -44,8 +48,12 @@ class MainWindow(QWidget):
         config_group.setLayout(config_layout)
         main_layout.addWidget(config_group)
 
+        # Bets Section (with another splitter for resizable functionality)
+        bets_splitter = QSplitter(Qt.Vertical)
+
         # Bets Entry
         bets_group = QGroupBox("Bets")
+        bets_group.setMinimumHeight(350)  # Adjust as needed
         bets_layout = QVBoxLayout()
 
         # Scroll Area for Bets
@@ -71,17 +79,25 @@ class MainWindow(QWidget):
             self.add_bet_entry(bet["name"], bet["odds"], bet["confidence"])
 
         bets_group.setLayout(bets_layout)
-        main_layout.addWidget(bets_group)
+        bets_splitter.addWidget(bets_group)
 
-        # Add/Remove Bet Buttons
-        buttons_layout = QHBoxLayout()
+        # Add/Remove Bet Buttons in a responsive layout
+        buttons_widget = QWidget()
+        buttons_layout = QHBoxLayout(buttons_widget)
         self.add_bet_btn = QPushButton("Add Bet")
         self.add_bet_btn.clicked.connect(lambda: self.add_bet_entry())
         self.remove_bet_btn = QPushButton("Remove Bet")
         self.remove_bet_btn.clicked.connect(lambda: self.remove_bet_entry())
         buttons_layout.addWidget(self.add_bet_btn)
         buttons_layout.addWidget(self.remove_bet_btn)
-        main_layout.addLayout(buttons_layout)
+        buttons_layout.setContentsMargins(0, 0, 0, 0)  # Remove margins for a compact look
+        buttons_layout.setSpacing(10)  # Set spacing between buttons
+        buttons_widget.setFixedHeight(50)  # Set a fixed height to keep it visible
+
+        bets_splitter.addWidget(buttons_widget)
+
+        # Add the bets splitter to the main layout
+        main_layout.addWidget(bets_splitter)
 
         # Action Buttons
         action_layout = QHBoxLayout()
@@ -96,6 +112,9 @@ class MainWindow(QWidget):
         action_layout.addWidget(self.load_btn)
         main_layout.addLayout(action_layout)
 
+        # Results and Explanations in a splitter
+        results_explanations_splitter = QSplitter(Qt.Vertical)
+
         # Results Table
         results_group = QGroupBox("Results")
         results_layout = QVBoxLayout()
@@ -108,7 +127,10 @@ class MainWindow(QWidget):
         self.results_table.setEditTriggers(QTableWidget.NoEditTriggers)
         results_layout.addWidget(self.results_table)
         results_group.setLayout(results_layout)
-        main_layout.addWidget(results_group)
+
+        # Set a minimum height for the results group
+        results_group.setMinimumHeight(200)  # Adjust as needed
+        results_explanations_splitter.addWidget(results_group)
 
         # Explanations Section
         explanations_group = QGroupBox("Strategy Explanations")
@@ -117,9 +139,22 @@ class MainWindow(QWidget):
         self.explanations_text.setReadOnly(True)
         explanations_layout.addWidget(self.explanations_text)
         explanations_group.setLayout(explanations_layout)
-        main_layout.addWidget(explanations_group)
 
-        self.setLayout(main_layout)
+        results_explanations_splitter.addWidget(explanations_group)
+
+        # Add the results and explanations splitter to the main layout
+        main_layout.addWidget(results_explanations_splitter)
+
+        # Wrap the entire layout in a scrollable area
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        main_widget = QWidget()
+        main_widget.setLayout(main_layout)
+        scroll_area.setWidget(main_widget)
+
+        # Set the main layout
+        final_layout = QVBoxLayout(self)
+        final_layout.addWidget(scroll_area)
 
     def add_bet_entry(self, name="Bet", odds="1.50", confidence="50"):
         bet_widget = BetEntryWidget(name=name, odds=odds, confidence=confidence)
