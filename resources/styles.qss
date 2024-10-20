@@ -1,0 +1,134 @@
+/* Modernized Stylesheet for the Betting App */
+
+QWidget {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14pt;
+    color: #2E2E2E;
+    background-color: #f7f8fc;
+}
+
+QGroupBox {
+    font-weight: bold;
+    border: 2px solid #e0e3ed;
+    border-radius: 10px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.05);
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 5px;
+    font-size: 12pt;
+    color: #444444;
+}
+
+QPushButton {
+    padding: 10px 15px;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12pt;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+QPushButton:hover {
+    background-color: #357ABD;
+    transform: scale(1.05);
+}
+
+QPushButton:pressed {
+    background-color: #2C6BA6;
+}
+
+QLineEdit {
+    padding: 10px;
+    border: 1px solid #d0d4e0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 12pt;
+    transition: border-color 0.3s;
+}
+
+QLineEdit:focus {
+    border: 1px solid #4a90e2;
+}
+
+QTextEdit {
+    border: 1px solid #d0d4e0;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #ffffff;
+    font-size: 12pt;
+    transition: border-color 0.3s;
+}
+
+QTextEdit:focus {
+    border: 1px solid #4a90e2;
+}
+
+QTableWidget {
+    background-color: #ffffff;
+    border: 1px solid #e0e3ed;
+    border-radius: 8px;
+    gridline-color: #e0e3ed;
+    font-size: 12pt;
+    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.05);
+    alternate-background-color: #f5f7fa;
+}
+
+QTableWidget::item {
+    padding: 10px;
+    text-align: center;
+}
+
+QTableWidget::item:selected {
+    background-color: #4a90e2;
+    color: white;
+}
+
+QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+QComboBox {
+    padding: 8px;
+    border: 1px solid #d0d4e0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    font-size: 12pt;
+    color: #333333;
+}
+
+QComboBox:focus {
+    border: 1px solid #4a90e2;
+}
+
+QComboBox::drop-down {
+    border: none;
+    background-color: #e0e3ed;
+    border-radius: 6px;
+}
+
+QComboBox::down-arrow {
+    image: url(:/icons/arrow-down.svg);
+    /* Make sure to replace with a path to an arrow icon */
+}
+
+QLabel {
+    font-size: 12pt;
+    color: #555555;
+}
+
+QHeaderView::section {
+    background-color: #f0f0f0;
+    padding: 8px;
+    border: none;
+    border-bottom: 2px solid #e0e3ed;
+    font-size: 12pt;
+    color: #333333;
+}
