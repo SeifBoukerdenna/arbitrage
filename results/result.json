@@ -1,8 +1,10 @@
 {
+    "date": "2024-10-22 23:33:33",
     "total_budget": 100.0,
     "total_stake": 100.00000000000001,
     "total_potential_payout": 365.23027616320525,
     "strategy_type": "System",
+    "risk_preference": "Moderate",
     "folds": null,
     "combinations": [
         {
@@ -344,49 +346,6 @@
             "ev_per_dollar": 0.08064756800000006,
             "stake_allocation": 0.14811724628715064,
             "potential_payout": 2.1320351911963558
-        },
-        {
-            "bets": [
-                {
-                    "name": "Bet 1",
-                    "odds": 1.6,
-                    "confidence": 60.0
-                },
-                {
-                    "name": "Bet 2",
-                    "odds": 1.7,
-                    "confidence": 55.0
-                },
-                {
-                    "name": "Bet 4",
-                    "odds": 1.8,
-                    "confidence": 65.0
-                }
-            ],
-            "combined_odds": 4.896000000000001,
-            "combined_prob": 0.21450000000000002,
-            "ev_per_dollar": 0.050192000000000236,
-            "stake_allocation": 0.0,
-            "potential_payout": 0.0
-        },
-        {
-            "bets": [
-                {
-                    "name": "Bet 3",
-                    "odds": 1.47,
-                    "confidence": 50.0
-                },
-                {
-                    "name": "Bet 5",
-                    "odds": 2.0,
-                    "confidence": 70.0
-                }
-            ],
-            "combined_odds": 2.94,
-            "combined_prob": 0.35,
-            "ev_per_dollar": 0.028999999999999915,
-            "stake_allocation": 0.0,
-            "potential_payout": 0.0
         }
     ]
 }
