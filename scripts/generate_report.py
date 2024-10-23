@@ -2,10 +2,12 @@ import json
 import argparse
 from datetime import datetime
 
+
 def format_combination(combination):
     """Format a single combination for output."""
     bets_info = "\n".join(
-        [f"        - Name: {bet['name']}, Odds: {bet['odds']}, Confidence: {bet['confidence']}%" for bet in combination['bets']]
+        [f"        - Name: {bet['name']}, Odds: {bet['odds']}, Confidence: {bet['confidence']}%" for bet in
+         combination['bets']]
     )
     return (
         f"    Combined Odds: {combination['combined_odds']:.2f}\n"
@@ -15,6 +17,7 @@ def format_combination(combination):
         f"    Potential Payout: {combination['potential_payout']:.2f}\n"
         f"    Bets:\n{bets_info}\n"
     )
+
 
 def generate_report(json_file, output_file):
     """Generate a report from the JSON file and save it to a text file."""
@@ -57,6 +60,7 @@ def generate_report(json_file, output_file):
 
     print(f"Report generated successfully: {output_file}")
 
+
 def main():
     parser = argparse.ArgumentParser(description="Generate a betting report from a JSON file.")
     parser.add_argument('input_file', type=str, help="The input JSON file containing betting data")
@@ -65,6 +69,7 @@ def main():
     args = parser.parse_args()
 
     generate_report(args.input_file, args.output_file)
+
 
 if __name__ == '__main__':
     main()
