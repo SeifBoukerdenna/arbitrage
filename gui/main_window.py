@@ -1,4 +1,6 @@
+import os
 import json
+from datetime import datetime
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
     QPushButton, QMessageBox, QComboBox, QTableWidget, QTableWidgetItem,
@@ -94,6 +96,14 @@ class MainWindow(QWidget):
         self.strategy_type_combo.setToolTip("Select your betting strategy type.")
         config_layout.addWidget(strategy_label)
         config_layout.addWidget(self.strategy_type_combo)
+
+        # Risk Preference
+        risk_label = QLabel("Risk Preference:")
+        self.risk_combo = QComboBox()
+        self.risk_combo.addItems(["Conservative", "Moderate", "Aggressive"])
+        self.risk_combo.setToolTip("Select your risk preference.")
+        config_layout.addWidget(risk_label)
+        config_layout.addWidget(self.risk_combo)
 
         # Number of Folds
         folds_label = QLabel("Number of Folds (Legs per Combination):")
@@ -285,6 +295,7 @@ class MainWindow(QWidget):
             return
 
         strategy_type = self.strategy_type_combo.currentText()
+        risk_preference = self.risk_combo.currentText()
 
         bets = []
         for idx, bet_widget in enumerate(self.bets_widgets, start=1):
@@ -318,22 +329,15 @@ class MainWindow(QWidget):
                 return
 
         # Generate combinations
-        self.strategy = BettingStrategy(total_budget, strategy_type, folds)
+        self.strategy = BettingStrategy(total_budget, strategy_type, folds, risk_preference)
         self.strategy.combinations = generate_combinations(bets, strategy_type, max_combination_size=len(bets))
 
-        # Filter combinations with positive EV
-        positive_ev_combinations = [combo for combo in self.strategy.combinations if combo.ev_per_dollar > 0]
+        # Filter and sort combinations based on risk preference
+        self.strategy.filter_and_sort_combinations()
 
-        if not positive_ev_combinations:
-            QMessageBox.warning(self, "Warning", "No positive expected value combinations found.")
+        if not self.strategy.combinations:
+            QMessageBox.warning(self, "Warning", "No suitable combinations found based on your risk preference.")
             return
-
-        # Sort combinations by expected value per dollar staked
-        positive_ev_combinations.sort(key=lambda combo: combo.ev_per_dollar, reverse=True)
-
-        # Limit to top K combinations
-        K = 500
-        self.strategy.combinations = positive_ev_combinations[:K]
 
         # Allocate stakes
         allocate_stakes(self.strategy)
@@ -355,9 +359,12 @@ class MainWindow(QWidget):
         explanations = []
 
         for index, combo in enumerate(combinations):
+            stake_allocation = round(self.strategy.stake_allocation[index], 2)
+            if stake_allocation <= 0:
+                continue  # Skip combinations with zero stake allocation
+
             bet_names = ", ".join([bet.name for bet in combo.bets])
             combined_odds = round(combo.combined_odds, 2)
-            stake_allocation = round(self.strategy.stake_allocation[index], 2)
             potential_payout = round(combined_odds * stake_allocation, 2)
             ev_per_dollar = round(combo.ev_per_dollar, 2)
 
@@ -406,19 +413,34 @@ class MainWindow(QWidget):
             return
 
         options = QFileDialog.Options()
+        # Set default directory to "results" folder
+        default_dir = os.path.join(os.getcwd(), "results")
+        os.makedirs(default_dir, exist_ok=True)
         file_path, _ = QFileDialog.getSaveFileName(
-            self, "Save Strategy", "", "JSON Files (*.json);;All Files (*)", options=options
+            self, "Save Strategy", default_dir, "JSON Files (*.json);;All Files (*)", options=options
         )
         if not file_path:
             return
 
+        # Filter combinations with stake allocation > 0
+        filtered_combinations = []
+        for combo, stake in zip(self.strategy.combinations, self.strategy.stake_allocation):
+            if stake > 0:
+                filtered_combinations.append((combo, stake))
+
+        if not filtered_combinations:
+            QMessageBox.warning(self, "Warning", "No combinations with stake allocation greater than zero to save.")
+            return
+
         data = {
+            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "total_budget": self.strategy.total_budget,
-            "total_stake": sum(self.strategy.stake_allocation),
+            "total_stake": sum(stake for combo, stake in filtered_combinations),
             "total_potential_payout": sum(
-                combo.combined_odds * stake for combo, stake in zip(self.strategy.combinations, self.strategy.stake_allocation)
+                combo.combined_odds * stake for combo, stake in filtered_combinations
             ),
             "strategy_type": self.strategy.strategy_type,
+            "risk_preference": self.strategy.risk_preference,
             "folds": self.strategy.folds,
             "combinations": [
                 {
@@ -432,7 +454,7 @@ class MainWindow(QWidget):
                     "stake_allocation": stake,
                     "potential_payout": combo.combined_odds * stake,
                 }
-                for combo, stake in zip(self.strategy.combinations, self.strategy.stake_allocation)
+                for combo, stake in filtered_combinations
             ],
         }
 
@@ -446,8 +468,10 @@ class MainWindow(QWidget):
     def load_strategy(self):
         """Load a betting strategy from a JSON file."""
         options = QFileDialog.Options()
+        # Set default directory to "results" folder
+        default_dir = os.path.join(os.getcwd(), "results")
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "Load Strategy", "", "JSON Files (*.json);;All Files (*)", options=options
+            self, "Load Strategy", default_dir, "JSON Files (*.json);;All Files (*)", options=options
         )
         if not file_path:
             return
@@ -456,7 +480,7 @@ class MainWindow(QWidget):
             with open(file_path, "r") as file:
                 data = json.load(file)
 
-            required_fields = {"total_budget", "strategy_type", "folds", "combinations"}
+            required_fields = {"total_budget", "strategy_type", "folds", "combinations", "risk_preference"}
             if not required_fields.issubset(data.keys()):
                 raise ValueError("Invalid strategy file format.")
 
@@ -472,6 +496,7 @@ class MainWindow(QWidget):
                 total_budget=data["total_budget"],
                 strategy_type=data["strategy_type"],
                 folds=data["folds"],
+                risk_preference=data["risk_preference"],
                 combinations=combinations,
                 stake_allocation=stake_allocations
             )
@@ -489,6 +514,9 @@ class MainWindow(QWidget):
         strategy_index = self.strategy_type_combo.findText(self.strategy.strategy_type)
         if strategy_index >= 0:
             self.strategy_type_combo.setCurrentIndex(strategy_index)
+        risk_index = self.risk_combo.findText(self.strategy.risk_preference)
+        if risk_index >= 0:
+            self.risk_combo.setCurrentIndex(risk_index)
         self.folds_input.setText(str(self.strategy.folds))
 
         # Clear existing bets
@@ -512,6 +540,7 @@ class MainWindow(QWidget):
         """Reset the application to its initial state."""
         self.budget_input.setText("100.00")
         self.strategy_type_combo.setCurrentIndex(0)
+        self.risk_combo.setCurrentIndex(1)  # Set to "Moderate" by default
         self.folds_input.setText("4")
         self.folds_input.setEnabled(False)
 
