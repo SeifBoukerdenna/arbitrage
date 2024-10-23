@@ -1,13 +1,11 @@
-# gui/bet_entry_widget.py
-
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QLabel
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QDoubleValidator, QIntValidator
+
 
 class BetEntryWidget(QWidget):
     """Widget for entering individual bet details."""
 
-    def __init__(self, parent=None, name: str = "Bet 1", odds: str = "1.50", confidence: str = "50"):
+    def __init__(self, parent=None, name: str = "Bet", odds: str = "1.50", confidence: str = "50"):
         super().__init__(parent)
         self.init_ui(name, odds, confidence)
 
@@ -46,25 +44,9 @@ class BetEntryWidget(QWidget):
         self.setLayout(layout)
 
     def get_bet_data(self) -> dict:
-        """
-        Retrieve the entered bet data.
-
-        :return: Dictionary containing bet name, odds, and confidence.
-        """
+        """Retrieve the entered bet data."""
         return {
             "name": self.name_input.text().strip(),
             "odds": self.odds_input.text().strip(),
             "confidence": self.confidence_input.text().strip()
         }
-
-    def set_bet_data(self, name: str, odds: float, confidence: float):
-        """
-        Set the bet data programmatically.
-
-        :param name: Bet name.
-        :param odds: Bet odds.
-        :param confidence: Bet confidence percentage.
-        """
-        self.name_input.setText(name)
-        self.odds_input.setText(f"{odds:.2f}")
-        self.confidence_input.setText(f"{confidence:.1f}")

@@ -1,0 +1,324 @@
+{
+    "total_budget": 100.0,
+    "strategy_type": "System",
+    "folds": null,
+    "combinations": [
+        {
+            "bets": [
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 3",
+                    "odds": 1.47,
+                    "confidence": 50.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 3",
+                    "odds": 1.47,
+                    "confidence": 50.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 3",
+                    "odds": 1.47,
+                    "confidence": 50.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 3",
+                    "odds": 1.47,
+                    "confidence": 50.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 1",
+                    "odds": 1.6,
+                    "confidence": 60.0
+                },
+                {
+                    "name": "Bet 2",
+                    "odds": 1.7,
+                    "confidence": 55.0
+                },
+                {
+                    "name": "Bet 4",
+                    "odds": 1.8,
+                    "confidence": 65.0
+                }
+            ]
+        },
+        {
+            "bets": [
+                {
+                    "name": "Bet 3",
+                    "odds": 1.47,
+                    "confidence": 50.0
+                },
+                {
+                    "name": "Bet 5",
+                    "odds": 2.0,
+                    "confidence": 70.0
+                }
+            ]
+        }
+    ],
+    "stake_allocation": [
+        16.208595687984527,
+        7.789442929775755,
+        6.66605334287575,
+        3.370753618294859,
+        25.863023270044234,
+        9.570701659289098,
+        7.703553996028467,
+        3.2798338949926285,
+        2.5173354714647154,
+        11.077056701446605,
+        0.9811925714237479,
+        0.6485742694204216,
+        2.723906179341907,
+        1.4518591613301453,
+        0.14811724628715064,
+        0.0,
+        0.0
+    ]
+}

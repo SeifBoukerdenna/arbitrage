@@ -1,73 +1,59 @@
-/* resources/styles.qss */
-
-/* General Widget Styling */
+/* Modern Light Mode Stylesheet */
 QWidget {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
+    color: #333;
+    background-color: #ffffff;
 }
 
-/* Group Boxes */
 QGroupBox {
-    font-weight: bold;
-    margin-top: 10px;
-    padding: 10px;
+    border: 1px solid #d6d9dc;
+    border-radius: 4px;
+    margin-top: 20px;
 }
 
-/* Buttons */
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 5px 0 5px;
+}
+
 QPushButton {
-    background-color: #4CAF50;
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 14px;
+    padding: 10px 20px;
     border-radius: 4px;
 }
 
 QPushButton:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
 }
 
-QPushButton:disabled {
-    background-color: #a5d6a7;
-}
-
-/* Line Edits */
-QLineEdit {
-    padding: 4px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* Combo Boxes */
+QLineEdit,
 QComboBox {
-    padding: 4px;
-    border: 1px solid #ccc;
+    padding: 6px;
+    border: 1px solid #ced4da;
     border-radius: 4px;
+    background-color: #ffffff;
+    color: #333;
 }
 
-/* Table Widget */
 QTableWidget {
-    border: 1px solid #ccc;
-    gridline-color: #eee;
+    background-color: #ffffff;
+    gridline-color: #dee2e6;
 }
 
 QHeaderView::section {
-    background-color: #f0f0f0;
-    padding: 4px;
-    border: 1px solid #ccc;
+    background-color: #f1f3f5;
+    padding: 8px;
+    border: none;
     font-weight: bold;
 }
 
-/* Scroll Areas */
-QScrollArea {
-    border: none;
-}
-
-/* Text Edit */
 QTextEdit {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
     border-radius: 4px;
+    color: #333;
 }

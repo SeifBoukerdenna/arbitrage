@@ -1,5 +1,3 @@
-# gui/main_window.py
-
 import json
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
@@ -7,73 +5,45 @@ from PyQt5.QtWidgets import (
     QFileDialog, QScrollArea, QGroupBox, QTextEdit, QSplitter, QHeaderView
 )
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont, QDoubleValidator, QIntValidator, QColor
+from PyQt5.QtGui import QFont, QDoubleValidator, QIntValidator, QPalette, QColor
 from .bet_entry_widget import BetEntryWidget
 from models.models import Bet, BettingStrategy, Combination
 from utils.utils import generate_combinations, allocate_stakes
 from data.bets_data import default_bets
 
+
 class MainWindow(QWidget):
-    """Main window for Rafinioo's Betting Strategy Simulator."""
+    """Main window for the Betting Strategy Simulator."""
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Rafinioo's Betting Strategy Simulator")
-        self.setMinimumSize(900, 700)  # Set a larger minimum size for better layout
+        self.setWindowTitle("Betting Strategy Simulator")
+        self.setMinimumSize(900, 700)
         self.bets_widgets = []
         self.strategy = None
         self.init_ui()
-        self.apply_stylesheet()
+        self.apply_light_mode()
 
-    def apply_stylesheet(self):
-        """Apply a stylesheet to the application for enhanced aesthetics."""
-        self.setStyleSheet("""
-            QWidget {
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-            }
-            QGroupBox {
-                border: 1px solid #cccccc;
-                border-radius: 5px;
-                margin-top: 10px;
-            }
-            QGroupBox::title {
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 3px 0 3px;
-            }
-            QPushButton {
-                border: none;
-                border-radius: 4px;
-                color: white;
-                background-color: #4CAF50;
-                padding: 8px 16px;
-            }
-            QPushButton:hover {
-                background-color: #45a049;
-            }
-            QPushButton:pressed {
-                background-color: #3e8e41;
-            }
-            QLineEdit {
-                border: 1px solid #cccccc;
-                border-radius: 4px;
-                padding: 5px;
-            }
-            QLabel {
-                font-weight: bold;
-            }
-            QTextEdit {
-                border: 1px solid #cccccc;
-                border-radius: 4px;
-            }
-        """)
+    def apply_light_mode(self):
+        """Ensure the application uses light mode colors."""
+        palette = self.palette()
+        palette.setColor(QPalette.Window, QColor("#ffffff"))
+        palette.setColor(QPalette.WindowText, QColor("#000000"))
+        palette.setColor(QPalette.Base, QColor("#ffffff"))
+        palette.setColor(QPalette.AlternateBase, QColor("#f6f6f6"))
+        palette.setColor(QPalette.ToolTipBase, QColor("#ffffff"))
+        palette.setColor(QPalette.ToolTipText, QColor("#000000"))
+        palette.setColor(QPalette.Text, QColor("#000000"))
+        palette.setColor(QPalette.Button, QColor("#f0f0f0"))
+        palette.setColor(QPalette.ButtonText, QColor("#000000"))
+        palette.setColor(QPalette.BrightText, QColor("#ff0000"))
+        self.setPalette(palette)
 
     def init_ui(self):
         """Initialize the user interface."""
         main_layout = QVBoxLayout()
-        main_layout.setContentsMargins(10, 10, 10, 10)  # Set margins for the main layout
-        main_layout.setSpacing(10)  # Set spacing between widgets
+        main_layout.setContentsMargins(10, 10, 10, 10)
+        main_layout.setSpacing(10)
 
         # Main Splitter to divide the window vertically
         main_splitter = QSplitter(Qt.Vertical)
@@ -97,14 +67,8 @@ class MainWindow(QWidget):
         # Add the splitter to the main layout
         main_layout.addWidget(main_splitter)
 
-        # Scroll Area to make the entire layout scrollable if needed
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(self.central_widget_with_layout(main_layout))
-
-        # Final Layout
-        final_layout = QVBoxLayout(self)
-        final_layout.addWidget(scroll_area)
+        # Set the main layout
+        self.setLayout(main_layout)
 
     def create_strategy_configuration(self) -> QGroupBox:
         """Create the strategy configuration group."""
@@ -146,7 +110,7 @@ class MainWindow(QWidget):
     def create_bets_section(self) -> QSplitter:
         """Create the bets entry section with add/remove functionality."""
         bets_splitter = QSplitter(Qt.Vertical)
-        bets_splitter.setHandleWidth(1)  # Make the splitter handle less prominent
+        bets_splitter.setHandleWidth(1)
 
         # Bets Entry Group
         bets_group = QGroupBox("Bets")
@@ -177,7 +141,7 @@ class MainWindow(QWidget):
         buttons_layout.setSpacing(20)
 
         self.add_bet_btn = QPushButton("Add Bet")
-        self.add_bet_btn.clicked.connect(self.add_bet_entry)
+        self.add_bet_btn.clicked.connect(lambda: self.add_bet_entry())
         self.add_bet_btn.setToolTip("Add a new bet entry.")
         self.remove_bet_btn = QPushButton("Remove Bet")
         self.remove_bet_btn.clicked.connect(self.remove_bet_entry)
@@ -192,7 +156,7 @@ class MainWindow(QWidget):
         return bets_splitter
 
     def create_action_buttons(self) -> QWidget:
-        """Create action buttons for processing, saving, and loading strategies."""
+        """Create action buttons for processing, saving, loading, and resetting strategies."""
         buttons_widget = QWidget()
         action_layout = QHBoxLayout(buttons_widget)
         action_layout.setContentsMargins(10, 10, 10, 10)
@@ -200,22 +164,24 @@ class MainWindow(QWidget):
 
         self.process_btn = QPushButton("Process Betting Strategy")
         self.process_btn.clicked.connect(self.process_strategy)
-        self.process_btn.setStyleSheet("background-color: #4CAF50; color: white; padding: 10px;")
         self.process_btn.setToolTip("Process the betting strategy based on entered bets.")
 
         self.save_btn = QPushButton("Save Strategy")
         self.save_btn.clicked.connect(self.save_strategy)
-        self.save_btn.setStyleSheet("background-color: #2196F3; color: white; padding: 10px;")
         self.save_btn.setToolTip("Save the current betting strategy to a file.")
 
         self.load_btn = QPushButton("Load Strategy")
         self.load_btn.clicked.connect(self.load_strategy)
-        self.load_btn.setStyleSheet("background-color: #f44336; color: white; padding: 10px;")
         self.load_btn.setToolTip("Load a previously saved betting strategy from a file.")
+
+        self.reset_btn = QPushButton("Reset")
+        self.reset_btn.clicked.connect(self.reset_app)
+        self.reset_btn.setToolTip("Reset the application to its initial state.")
 
         action_layout.addWidget(self.process_btn)
         action_layout.addWidget(self.save_btn)
         action_layout.addWidget(self.load_btn)
+        action_layout.addWidget(self.reset_btn)
 
         buttons_widget.setLayout(action_layout)
         buttons_widget.setFixedHeight(70)
@@ -225,7 +191,7 @@ class MainWindow(QWidget):
     def create_results_explanations_section(self) -> QSplitter:
         """Create the results and explanations section."""
         splitter = QSplitter(Qt.Vertical)
-        splitter.setHandleWidth(1)  # Make the splitter handle less prominent
+        splitter.setHandleWidth(1)
 
         # Results Table Group
         results_group = QGroupBox("Results")
@@ -234,48 +200,19 @@ class MainWindow(QWidget):
         results_layout.setSpacing(10)
 
         self.results_table = QTableWidget()
-        self.results_table.setColumnCount(4)
+        self.results_table.setColumnCount(5)
         self.results_table.setHorizontalHeaderLabels([
-            "Combination", "Combined Odds", "Stake Allocation ($)", "Potential Payout ($)"
+            "Combination", "Combined Odds", "Stake Allocation ($)", "Potential Payout ($)", "EV per $"
         ])
         self.results_table.horizontalHeader().setStretchLastSection(True)
         self.results_table.setEditTriggers(QTableWidget.NoEditTriggers)
         self.results_table.setSelectionBehavior(QTableWidget.SelectRows)
         self.results_table.setSelectionMode(QTableWidget.SingleSelection)
         self.results_table.setAlternatingRowColors(True)
-        self.results_table.setStyleSheet("""
-            QTableWidget {
-                background-color: #f9f9f9;
-                gridline-color: #cccccc;
-            }
-            QTableWidget::item:selected {
-                background-color: #b3d7ff;
-            }
-            QHeaderView::section {
-                background-color: #e0e0e0;
-                padding: 4px;
-                border: 1px solid #cccccc;
-            }
-            /* Alternate row colors */
-            QTableWidget::item {
-                padding: 5px;
-            }
-            QTableWidget::item:nth-child(even) {
-                background-color: #ffffff;
-            }
-            QTableWidget::item:nth-child(odd) {
-                background-color: #f2f2f2;
-            }
-        """)
-
-        # Enable user to resize columns
-        self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Interactive)
-        # Allow automatic row height based on content
-        self.results_table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         results_layout.addWidget(self.results_table)
         results_group.setLayout(results_layout)
-        results_group.setMinimumHeight(250)
         splitter.addWidget(results_group)
 
         # Totals Display Group
@@ -287,7 +224,6 @@ class MainWindow(QWidget):
         self.total_stake_label = QLabel("Total Stake Allocation ($): 0.00")
         self.total_payout_label = QLabel("Total Potential Payout ($): 0.00")
 
-        # Styling for totals
         totals_font = QFont()
         totals_font.setPointSize(12)
         totals_font.setBold(True)
@@ -297,7 +233,6 @@ class MainWindow(QWidget):
         totals_layout.addWidget(self.total_stake_label)
         totals_layout.addWidget(self.total_payout_label)
         totals_group.setLayout(totals_layout)
-        totals_group.setMinimumHeight(50)
         splitter.addWidget(totals_group)
 
         # Explanations Section Group
@@ -308,27 +243,11 @@ class MainWindow(QWidget):
 
         self.explanations_text = QTextEdit()
         self.explanations_text.setReadOnly(True)
-        self.explanations_text.setStyleSheet("""
-            QTextEdit {
-                background-color: #ffffff;
-                border: 1px solid #cccccc;
-            }
-        """)
         explanations_layout.addWidget(self.explanations_text)
         explanations_group.setLayout(explanations_layout)
-        explanations_group.setMinimumHeight(150)
         splitter.addWidget(explanations_group)
 
-        # Set initial sizes for splitter
-        splitter.setSizes([300, 60, 200])
-
         return splitter
-
-    def central_widget_with_layout(self, layout: QVBoxLayout) -> QWidget:
-        """Wrap the given layout in a central widget."""
-        central_widget = QWidget()
-        central_widget.setLayout(layout)
-        return central_widget
 
     def add_bet_entry(self, name: str = "Bet", odds: str = "1.50", confidence: str = "50"):
         """Add a new bet entry widget."""
@@ -346,17 +265,14 @@ class MainWindow(QWidget):
             QMessageBox.warning(self, "Warning", "No more bets to remove.")
 
     def on_strategy_type_change(self, strategy_type: str):
-        """
-        Handle changes in the strategy type selection.
-
-        :param strategy_type: Newly selected strategy type.
-        """
+        """Handle changes in the strategy type selection."""
         if strategy_type in ["Accumulator", "Parlay"]:
             num_bets = len(self.bets_widgets)
             self.folds_input.setText(str(num_bets))
             self.folds_input.setEnabled(False)
         elif strategy_type == "System":
-            self.folds_input.setEnabled(True)
+            self.folds_input.setEnabled(False)
+            self.folds_input.setText("Varies")
 
     def process_strategy(self):
         """Process the betting strategy based on user input."""
@@ -369,13 +285,6 @@ class MainWindow(QWidget):
             return
 
         strategy_type = self.strategy_type_combo.currentText()
-        try:
-            folds = int(self.folds_input.text().strip())
-            if folds <= 0:
-                raise ValueError("Number of folds must be greater than zero.")
-        except ValueError as e:
-            QMessageBox.critical(self, "Input Error", f"Invalid Number of Folds: {e}")
-            return
 
         bets = []
         for idx, bet_widget in enumerate(self.bets_widgets, start=1):
@@ -395,20 +304,38 @@ class MainWindow(QWidget):
                 QMessageBox.critical(self, "Input Error", f"Bet {idx} ({bet_data.get('name', 'Unnamed')}): {e}")
                 return
 
-        if strategy_type in ["Accumulator", "Parlay"]:
-            folds = len(bets)
-            self.folds_input.setText(str(folds))
+        folds = len(bets)
+        self.folds_input.setText(str(folds))
 
-        if folds > len(bets):
-            QMessageBox.critical(
-                self, "Input Error",
-                f"Number of folds ({folds}) cannot exceed the number of bets ({len(bets)})."
-            )
+        if strategy_type == "System":
+            folds = None  # For System strategy, folds vary
+        else:
+            if folds > len(bets):
+                QMessageBox.critical(
+                    self, "Input Error",
+                    f"Number of folds ({folds}) cannot exceed the number of bets ({len(bets)})."
+                )
+                return
+
+        # Generate combinations
+        self.strategy = BettingStrategy(total_budget, strategy_type, folds)
+        self.strategy.combinations = generate_combinations(bets, strategy_type, max_combination_size=len(bets))
+
+        # Filter combinations with positive EV
+        positive_ev_combinations = [combo for combo in self.strategy.combinations if combo.ev_per_dollar > 0]
+
+        if not positive_ev_combinations:
+            QMessageBox.warning(self, "Warning", "No positive expected value combinations found.")
             return
 
-        # Generate combinations and allocate stakes
-        self.strategy = BettingStrategy(total_budget, strategy_type, folds)
-        self.strategy.combinations = generate_combinations(bets, folds, strategy_type)
+        # Sort combinations by expected value per dollar staked
+        positive_ev_combinations.sort(key=lambda combo: combo.ev_per_dollar, reverse=True)
+
+        # Limit to top K combinations
+        K = 500
+        self.strategy.combinations = positive_ev_combinations[:K]
+
+        # Allocate stakes
         allocate_stakes(self.strategy)
 
         # Display results
@@ -426,14 +353,13 @@ class MainWindow(QWidget):
         total_payout = 0.0
         total_stake = 0.0
         explanations = []
-        combo_rows = []
 
-        # Collect all combination data first
         for index, combo in enumerate(combinations):
             bet_names = ", ".join([bet.name for bet in combo.bets])
             combined_odds = round(combo.combined_odds, 2)
             stake_allocation = round(self.strategy.stake_allocation[index], 2)
             potential_payout = round(combined_odds * stake_allocation, 2)
+            ev_per_dollar = round(combo.ev_per_dollar, 2)
 
             total_stake += stake_allocation
             total_payout += potential_payout
@@ -442,53 +368,36 @@ class MainWindow(QWidget):
                 f"<b>Combination:</b> {bet_names}<br>"
                 f"<b>Combined Odds:</b> {combined_odds}<br>"
                 f"<b>Stake Allocation:</b> ${stake_allocation}<br>"
-                f"<b>Potential Payout:</b> ${potential_payout}<br><br>"
+                f"<b>Potential Payout:</b> ${potential_payout}<br>"
+                f"<b>Expected Value per $:</b> {ev_per_dollar}<br><br>"
             )
             explanations.append(explanation)
 
-            combo_rows.append({
-                "Combination": bet_names,
-                "Combined Odds": combined_odds,
-                "Stake Allocation ($)": stake_allocation,
-                "Potential Payout ($)": potential_payout
-            })
-
-        # Sort the combo_rows based on "Stake Allocation ($)" in descending order
-        sorted_combo_rows = sorted(combo_rows, key=lambda x: x["Stake Allocation ($)"], reverse=True)
-
-        # Populate the results table with sorted rows
-        for row_data in sorted_combo_rows:
             row_position = self.results_table.rowCount()
             self.results_table.insertRow(row_position)
 
-            combination_item = QTableWidgetItem(row_data["Combination"])
-            combination_item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-            self.results_table.setItem(row_position, 0, combination_item)
-
-            odds_item = QTableWidgetItem(f"{row_data['Combined Odds']:.2f}")
-            odds_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            self.results_table.setItem(row_position, 1, odds_item)
-
-            stake_item = QTableWidgetItem(f"${row_data['Stake Allocation ($)']:.2f}")
-            stake_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            self.results_table.setItem(row_position, 2, stake_item)
-
-            payout_item = QTableWidgetItem(f"${row_data['Potential Payout ($)']:.2f}")
-            payout_item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            self.results_table.setItem(row_position, 3, payout_item)
+            self.results_table.setItem(row_position, 0, QTableWidgetItem(bet_names))
+            self.results_table.setItem(row_position, 1, QTableWidgetItem(f"{combined_odds:.2f}"))
+            self.results_table.setItem(row_position, 2, QTableWidgetItem(f"${stake_allocation:.2f}"))
+            self.results_table.setItem(row_position, 3, QTableWidgetItem(f"${potential_payout:.2f}"))
+            self.results_table.setItem(row_position, 4, QTableWidgetItem(f"{ev_per_dollar:.2f}"))
 
         # Update Totals Display
         self.total_stake_label.setText(f"Total Stake Allocation ($): {total_stake:.2f}")
         self.total_payout_label.setText(f"Total Potential Payout ($): {total_payout:.2f}")
 
-        # Enable sorting (user can sort by clicking column headers)
+        # Enable sorting
         self.results_table.setSortingEnabled(True)
-        # Initially sort by "Stake Allocation ($)" descending
-        self.results_table.sortItems(2, Qt.DescendingOrder)
+        # Initially sort by "EV per $"
+        self.results_table.sortItems(4, Qt.DescendingOrder)
 
         # Populate explanations
         for explanation in explanations:
             self.explanations_text.append(explanation)
+
+        # Add total stake and payout to explanations
+        self.explanations_text.append(f"<b>Total Stake Allocation ($):</b> {total_stake:.2f}")
+        self.explanations_text.append(f"<b>Total Potential Payout ($):</b> {total_payout:.2f}")
 
     def save_strategy(self):
         """Save the current betting strategy to a JSON file."""
@@ -505,6 +414,10 @@ class MainWindow(QWidget):
 
         data = {
             "total_budget": self.strategy.total_budget,
+            "total_stake": sum(self.strategy.stake_allocation),
+            "total_potential_payout": sum(
+                combo.combined_odds * stake for combo, stake in zip(self.strategy.combinations, self.strategy.stake_allocation)
+            ),
             "strategy_type": self.strategy.strategy_type,
             "folds": self.strategy.folds,
             "combinations": [
@@ -512,11 +425,15 @@ class MainWindow(QWidget):
                     "bets": [
                         {"name": bet.name, "odds": bet.odds, "confidence": bet.confidence}
                         for bet in combo.bets
-                    ]
+                    ],
+                    "combined_odds": combo.combined_odds,
+                    "combined_prob": combo.combined_prob,
+                    "ev_per_dollar": combo.ev_per_dollar,
+                    "stake_allocation": stake,
+                    "potential_payout": combo.combined_odds * stake,
                 }
-                for combo in self.strategy.combinations
+                for combo, stake in zip(self.strategy.combinations, self.strategy.stake_allocation)
             ],
-            "stake_allocation": self.strategy.stake_allocation
         }
 
         try:
@@ -539,23 +456,24 @@ class MainWindow(QWidget):
             with open(file_path, "r") as file:
                 data = json.load(file)
 
-            required_fields = {"total_budget", "strategy_type", "folds", "combinations", "stake_allocation"}
+            required_fields = {"total_budget", "strategy_type", "folds", "combinations"}
             if not required_fields.issubset(data.keys()):
                 raise ValueError("Invalid strategy file format.")
 
-            combinations = [
-                Combination(
-                    bets=[Bet(bet["name"], bet["odds"], bet["confidence"]) for bet in combo["bets"]]
-                )
-                for combo in data["combinations"]
-            ]
+            combinations = []
+            stake_allocations = []
+            for combo_data in data["combinations"]:
+                bets = [Bet(bet["name"], bet["odds"], bet["confidence"]) for bet in combo_data["bets"]]
+                combo = Combination(bets)
+                combinations.append(combo)
+                stake_allocations.append(combo_data.get("stake_allocation", 0.0))
 
             self.strategy = BettingStrategy(
                 total_budget=data["total_budget"],
                 strategy_type=data["strategy_type"],
                 folds=data["folds"],
                 combinations=combinations,
-                stake_allocation=data["stake_allocation"]
+                stake_allocation=stake_allocations
             )
 
             # Update UI with loaded data
@@ -589,3 +507,27 @@ class MainWindow(QWidget):
 
         # Display results
         self.display_results()
+
+    def reset_app(self):
+        """Reset the application to its initial state."""
+        self.budget_input.setText("100.00")
+        self.strategy_type_combo.setCurrentIndex(0)
+        self.folds_input.setText("4")
+        self.folds_input.setEnabled(False)
+
+        # Clear bets
+        while self.bets_widgets:
+            self.remove_bet_entry()
+
+        # Add default bets
+        for bet in default_bets:
+            self.add_bet_entry(bet["name"], bet["odds"], bet["confidence"])
+
+        # Clear results and explanations
+        self.results_table.setRowCount(0)
+        self.explanations_text.clear()
+        self.total_stake_label.setText("Total Stake Allocation ($): 0.00")
+        self.total_payout_label.setText("Total Potential Payout ($): 0.00")
+        self.strategy = None
+
+        QMessageBox.information(self, "Reset", "Application has been reset to its initial state.")
