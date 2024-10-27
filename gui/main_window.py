@@ -1,9 +1,12 @@
+# main_window.py
+
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSplitter
 from PyQt5.QtCore import Qt
 from .widgets.strategy_config_widget import StrategyConfigWidget
 from .widgets.bets_entry_widget import BetsEntryWidget
 from .widgets.action_buttons_widget import ActionButtonsWidget
 from .widgets.results_explanations_widget import ResultsExplanationsWidget
+from .widgets.visualization_widget import VisualizationWidget
 from models.betting_strategy import BettingStrategy
 from utils.combination_utils import generate_combinations
 from utils.stake_allocation_utils import allocate_stakes
@@ -26,6 +29,7 @@ class MainWindow(QWidget):
 
     def init_ui(self):
         """Initialize the user interface."""
+
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(10, 10, 10, 10)
         main_layout.setSpacing(10)
@@ -53,7 +57,17 @@ class MainWindow(QWidget):
 
         # Results and Explanations Section
         self.results_widget = ResultsExplanationsWidget()
-        main_splitter.addWidget(self.results_widget)
+        # Visualization Widget
+        self.visualization_widget = VisualizationWidget()
+
+        # Add a splitter to hold results and visualizations side by side
+        results_visual_splitter = QSplitter(Qt.Horizontal)
+        results_visual_splitter.addWidget(self.results_widget)
+        results_visual_splitter.addWidget(self.visualization_widget)
+        results_visual_splitter.setStretchFactor(0, 3)
+        results_visual_splitter.setStretchFactor(1, 2)
+
+        main_splitter.addWidget(results_visual_splitter)
 
         # Add the splitter to the main layout
         main_layout.addWidget(main_splitter)
@@ -87,7 +101,9 @@ class MainWindow(QWidget):
 
             # Generate combinations
             self.strategy = BettingStrategy(total_budget, strategy_type, folds, risk_preference)
-            self.strategy.combinations = generate_combinations(bets, strategy_type, risk_preference, folds=folds)
+            self.strategy.combinations = generate_combinations(
+                bets, strategy_type, risk_preference, folds=folds
+            )
 
             # Filter and sort combinations based on risk preference
             self.strategy.filter_and_sort_combinations()
@@ -107,6 +123,7 @@ class MainWindow(QWidget):
     def display_results(self):
         """Display the results and explanations based on the processed strategy."""
         self.results_widget.display_results(self.strategy)
+        self.visualization_widget.set_strategy(self.strategy)
 
     def save_strategy(self):
         """Save the current betting strategy to a JSON file."""
@@ -126,4 +143,5 @@ class MainWindow(QWidget):
         self.config_widget.reset()
         self.bets_widget.reset()
         self.results_widget.reset()
+        self.visualization_widget.set_strategy(None)
         self.strategy = None
