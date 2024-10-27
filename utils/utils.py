@@ -19,7 +19,12 @@ def generate_combinations(bets: List[Bet], strategy_type: str, max_combination_s
     combinations = []
     if strategy_type == "System":
         max_size = max_combination_size or len(bets)
-        for r in range(1, max_size + 1):
+        min_size = {
+            "Conservative": 1,
+            "Moderate": 2,
+            "Aggressive": 3
+        }.get(strategy.risk_preference, 2)
+        for r in range(min_size, max_size + 1):
             combinations.extend([Combination(list(combo)) for combo in itertools.combinations(bets, r)])
     else:
         combinations = [Combination(bets)]

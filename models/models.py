@@ -25,7 +25,7 @@ class Combination:
         self.combined_prob = 1.0
         for bet in self.bets:
             self.combined_odds *= bet.odds
-            self.combined_prob *= bet.confidence / 100.0
+            self.combined_prob *= bet.confidence  # Already between 0 and 1
         self.ev_per_dollar = self.combined_prob * self.combined_odds - 1.0
 
 

@@ -72,24 +72,30 @@ class BetsEntryWidget(QGroupBox):
             QMessageBox.warning(self, "Warning", "No more bets to remove.")
 
     def get_bets(self):
-        bets = []
-        for idx, bet_widget in enumerate(self.bets_widgets, start=1):
-            bet_data = bet_widget.get_bet_data()
-            try:
-                name = bet_data["name"]
-                odds = float(bet_data["odds"])
-                confidence = float(bet_data["confidence"])
-                if not name:
-                    raise ValueError("Bet name cannot be empty.")
-                if odds <= 1.0:
-                    raise ValueError("Odds must be greater than 1.0.")
-                if not (0 <= confidence <= 100):
-                    raise ValueError("Confidence must be between 0 and 100.")
-                bets.append(Bet(name, odds, confidence))
-            except ValueError as e:
-                QMessageBox.critical(self, "Input Error", f"Bet {idx} ({bet_data.get('name', 'Unnamed')}): {e}")
-                raise
-        return bets
+            bets = []
+            confidence_mapping = {
+                "Not Confident": 0.5,        # 50%
+                "Moderately Confident": 0.7, # 70%
+                "Super Confident": 0.9       # 90%
+            }
+            for idx, bet_widget in enumerate(self.bets_widgets, start=1):
+                bet_data = bet_widget.get_bet_data()
+                try:
+                    name = bet_data["name"]
+                    odds = float(bet_data["odds"])
+                    confidence_str = bet_data["confidence"]
+                    if not name:
+                        raise ValueError("Bet name cannot be empty.")
+                    if odds <= 1.0:
+                        raise ValueError("Odds must be greater than 1.0.")
+                    if confidence_str not in confidence_mapping:
+                        raise ValueError("Invalid confidence selection.")
+                    confidence = confidence_mapping[confidence_str]
+                    bets.append(Bet(name, odds, confidence))
+                except ValueError as e:
+                    QMessageBox.critical(self, "Input Error", f"Bet {idx} ({bet_data.get('name', 'Unnamed')}): {e}")
+                    raise
+            return bets
 
     def set_bets(self, bets):
         # Clear existing bets

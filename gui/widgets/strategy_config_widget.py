@@ -28,6 +28,7 @@ class StrategyConfigWidget(QGroupBox):
         self.strategy_type_combo = QComboBox()
         self.strategy_type_combo.addItems(["Accumulator", "Parlay", "System"])
         self.strategy_type_combo.setToolTip("Select your betting strategy type.")
+        self.strategy_type_combo.currentTextChanged.connect(self.on_strategy_type_changed)
         config_layout.addWidget(strategy_label)
         config_layout.addWidget(self.strategy_type_combo)
 
@@ -49,6 +50,13 @@ class StrategyConfigWidget(QGroupBox):
         config_layout.addWidget(self.folds_input)
 
         self.setLayout(config_layout)
+        self.on_strategy_type_changed(self.strategy_type_combo.currentText())
+
+    def on_strategy_type_changed(self, strategy_type):
+        if strategy_type == "System":
+            self.folds_input.setEnabled(True)
+        else:
+            self.folds_input.setEnabled(False)
 
     def get_total_budget(self) -> float:
         return float(self.budget_input.text().strip())
@@ -59,11 +67,21 @@ class StrategyConfigWidget(QGroupBox):
     def get_risk_preference(self) -> str:
         return self.risk_combo.currentText()
 
+    def get_folds(self) -> int:
+        if self.folds_input.isEnabled():
+            return int(self.folds_input.text().strip())
+        else:
+            return None
+
     def set_strategy(self, strategy):
         self.budget_input.setText(f"{strategy.total_budget:.2f}")
         self.strategy_type_combo.setCurrentText(strategy.strategy_type)
         self.risk_combo.setCurrentText(strategy.risk_preference)
-        self.folds_input.setText(str(strategy.folds))
+        if strategy.folds is not None:
+            self.folds_input.setText(str(strategy.folds))
+        else:
+            self.folds_input.setText("")
+        self.on_strategy_type_changed(strategy.strategy_type)
 
     def reset(self):
         self.budget_input.setText("100.00")

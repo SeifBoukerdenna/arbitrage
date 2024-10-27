@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QLabel
-from PyQt5.QtGui import QDoubleValidator, QIntValidator
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QLabel, QComboBox
+from PyQt5.QtGui import QDoubleValidator
 
 
 class BetEntryWidget(QWidget):
     """Widget for entering individual bet details."""
 
-    def __init__(self, parent=None, name: str = "Bet", odds: str = "1.50", confidence: str = "50"):
+    def __init__(self, parent=None, name: str = "Bet", odds: str = "1.50", confidence: str = "Moderately Confident"):
         super().__init__(parent)
         self.init_ui(name, odds, confidence)
 
@@ -33,12 +33,12 @@ class BetEntryWidget(QWidget):
         layout.addWidget(self.odds_input)
 
         # Confidence Input
-        self.confidence_input = QLineEdit(confidence)
-        self.confidence_input.setPlaceholderText("Confidence (%)")
-        self.confidence_input.setFixedWidth(120)
-        self.confidence_input.setValidator(QIntValidator(0, 100))
-        self.confidence_input.setToolTip("Enter your confidence percentage in the bet.")
-        layout.addWidget(QLabel("Confidence (%):"))
+        self.confidence_input = QComboBox()
+        self.confidence_input.setFixedWidth(150)
+        self.confidence_input.addItems(["Not Confident", "Moderately Confident", "Super Confident"])
+        self.confidence_input.setToolTip("Select your confidence level in the bet.")
+        self.confidence_input.setCurrentText(confidence)
+        layout.addWidget(QLabel("Confidence:"))
         layout.addWidget(self.confidence_input)
 
         self.setLayout(layout)
@@ -48,5 +48,5 @@ class BetEntryWidget(QWidget):
         return {
             "name": self.name_input.text().strip(),
             "odds": self.odds_input.text().strip(),
-            "confidence": self.confidence_input.text().strip()
+            "confidence": self.confidence_input.currentText()
         }

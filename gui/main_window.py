@@ -22,7 +22,7 @@ class MainWindow(QWidget):
 
     def apply_light_mode(self):
         """Ensure the application uses light mode colors."""
-        # [Same as before]
+        pass  # Implement light mode styling if needed
 
     def init_ui(self):
         """Initialize the user interface."""
@@ -63,34 +63,46 @@ class MainWindow(QWidget):
 
     def process_strategy(self):
         """Process the betting strategy based on user input."""
-        # [Modified to work with the new widgets]
-        # Retrieve configuration data
-        total_budget = self.config_widget.get_total_budget()
-        strategy_type = self.config_widget.get_strategy_type()
-        risk_preference = self.config_widget.get_risk_preference()
+        try:
+            # Retrieve configuration data
+            total_budget = self.config_widget.get_total_budget()
+            strategy_type = self.config_widget.get_strategy_type()
+            risk_preference = self.config_widget.get_risk_preference()
 
-        # Retrieve bets data
-        bets = self.bets_widget.get_bets()
+            # Retrieve folds if strategy_type is System
+            folds = None
+            if strategy_type == "System":
+                folds = self.config_widget.get_folds()
 
-        # Error checking and processing as before
-        # [Same logic as before, adjusted for the new structure]
+            # Retrieve bets data
+            bets = self.bets_widget.get_bets()
 
-        # Generate combinations
-        self.strategy = BettingStrategy(total_budget, strategy_type, None, risk_preference)
-        self.strategy.combinations = generate_combinations(bets, strategy_type)
+            # Error checking
+            if total_budget <= 0:
+                self.results_widget.show_warning("Total budget must be greater than zero.")
+                return
+            if not bets:
+                self.results_widget.show_warning("Please enter at least one bet.")
+                return
 
-        # Filter and sort combinations based on risk preference
-        self.strategy.filter_and_sort_combinations()
+            # Generate combinations
+            self.strategy = BettingStrategy(total_budget, strategy_type, folds, risk_preference)
+            self.strategy.combinations = generate_combinations(bets, strategy_type, risk_preference, folds=folds)
 
-        if not self.strategy.combinations:
-            self.results_widget.show_warning("No suitable combinations found based on your risk preference.")
-            return
+            # Filter and sort combinations based on risk preference
+            self.strategy.filter_and_sort_combinations()
 
-        # Allocate stakes
-        allocate_stakes(self.strategy)
+            if not self.strategy.combinations:
+                self.results_widget.show_warning("No suitable combinations found based on your risk preference.")
+                return
 
-        # Display results
-        self.display_results()
+            # Allocate stakes
+            allocate_stakes(self.strategy)
+
+            # Display results
+            self.display_results()
+        except Exception as e:
+            self.results_widget.show_warning(str(e))
 
     def display_results(self):
         """Display the results and explanations based on the processed strategy."""
